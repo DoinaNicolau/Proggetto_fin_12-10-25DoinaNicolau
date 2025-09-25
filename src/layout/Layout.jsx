@@ -1,20 +1,27 @@
-import { Outlet } from "react-router"
+import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Sidebar from "../components/Sidebar";
 
 
 export default function Layout(){
 
     return (
-         <div className="style-layout-system flex flex-col min-h-screen">
-      <Header />
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <Sidebar />
 
-      <main className="style-main-content flex-1 p-6">
+      {/* Contenuto principale */}
+      <div className="flex-1 flex flex-col">
+        <Header />
+
+        <main className="flex-1 p-6">
         
-        <Outlet />
-      </main>
+          <Outlet />
+        </main>
 
-      <Footer />
+        <Footer />
+      </div>
     </div>
-    )
+    );
 }

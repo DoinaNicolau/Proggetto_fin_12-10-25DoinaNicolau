@@ -1,6 +1,8 @@
- const [open, setOpen] = useState(false);
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Sidebar(){
+    const [open, setOpen] = useState(false);
     return (
         <aside
             className={`fixed top-0 left-0 h-full bg-blue-700 text-white w-64 p-4 transform ${
@@ -22,9 +24,9 @@ export default function Sidebar(){
             <nav>
                 <ul className="space-y-4">
                 <li>
-                    <a href="#" className="hover:text-blue-300">
-                    Homepage
-                    </a>
+                    <Link to="/" className="hover:text-blue-300">
+                        Homepage
+                    </Link>
                 </li>
                 <li>
                     <a href="#" className="hover:text-blue-300">
