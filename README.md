@@ -1,16 +1,67 @@
-# React + Vite
+# Progetto Finale React - Game Explorer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Una semplice applicazione React che mostra i giochi più recenti usando l'API di [RAWG](https://rawg.io/).
 
-Currently, two official plugins are available:
+## Funzionalità
+- Fetch dei giochi più recenti tramite API RAWG
+- Visualizzazione dei giochi in schede responsive con effetto glass e hover
+- Lazy loading delle immagini con effetto blur
+- Filtraggio dei giochi per genere tramite dropdown interattivo (Headless UI)
+- Layout con Header, Sidebar e Footer riutilizzabili
+- Sidebar con effetto trasparente e glass
+- Responsive design ottimizzato per desktop e mobile
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tecnologie
+- React (latest) + JSX
+- React Router DOM
+- Tailwind CSS + DaisyUI
+- Headless UI (per dropdown personalizzato)
+- react-lazy-load-image-component
+- Vite come bundler
 
-## React Compiler
+## Come eseguire il progetto
+1. Clona il repository:
+   ```bash
+   git clone https://github.com/TUO_USERNAME/progetto-finale-doinanicolau.git
+Installa le dipendenze:
 
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+bash
+Copia codice
+npm install
+Avvia il progetto in locale:
 
-## Expanding the ESLint configuration
+bash
+Copia codice
+npm run dev
+Inserisci la tua API_KEY di RAWG in .env:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+env
+Copia codice
+VITE_API_KEY=la_tua_chiave_api
+Struttura del progetto
+bash
+Copia codice
+src/
+├─ components/     # Card, LazyLoadGameImage, Header, Footer, Sidebar, GenresDropdown
+├─ layout/         # Layout principale con Header e Footer
+├─ pages/          # HomePage
+├─ routes/         # Routing.jsx
+├─ assets/         # eventuali immagini o icone
+Note sul design
+Tutti i componenti utilizzano Tailwind CSS per stili rapidi e responsive
+
+Card dei giochi con effetto glass, bordi stondati e hover con animazione di scala
+
+Sidebar e pulsante toggle con trasparenza e backdrop blur
+
+Dropdown generi personalizzato tramite Headless UI, con colori coordinati e bordo stondato
+
+
+
+
+
+
+
+
+
+
