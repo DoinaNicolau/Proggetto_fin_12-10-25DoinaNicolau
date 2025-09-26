@@ -1,34 +1,38 @@
 import { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
 import Card from "../components/Card";
 
-export default function HomePage({ selectedGenre }) {
+export default function HomePage() {
+  const { selectedGenre } = useOutletContext(); // prendi il genere dal layout
+
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
   const apiKey = import.meta.env.VITE_API_KEY;
-  const initialUrl = `https://api.rawg.io/api/games?key=${apiKey}&dates=2024-01-01,2024-12-31&page=1`;
 
   const load = async () => {
     try {
-      const response = await fetch(initialUrl);
+      let url = `https://api.rawg.io/api/games?key=${apiKey}&dates=2024-01-01,2024-12-31&page=1`;
+
+      // aggiungi il filtro per genere se selezionato
+      if (selectedGenre) {
+        url += `&genres=${selectedGenre}`;
+      }
+
+      const response = await fetch(url);
       if (!response.ok) throw new Error(response.statusText);
       const json = await response.json();
       setData(json);
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err.message);
       setData(null);
     }
   };
 
+  // ricarica ogni volta che cambia il genere
   useEffect(() => {
     load();
-  }, []);
-
-  const filteredGames = selectedGenre
-    ? data?.results.filter((game) =>
-        game.genres.some((g) => g.slug === selectedGenre)
-      )
-    : data?.results;
+  }, [selectedGenre]);
 
   return (
     <main className="p-8 bg-[#F5E8C7] min-h-screen">
@@ -44,7 +48,7 @@ export default function HomePage({ selectedGenre }) {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 justify-center">
-        {filteredGames?.map((game) => (
+        {data?.results.map((game) => (
           <Card key={game.id} game={game} />
         ))}
       </div>
