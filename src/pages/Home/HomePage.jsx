@@ -1,38 +1,26 @@
 import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
-import Card from "../components/Card";
+import Card from "../../components/Card";
+import useFetchSolution from "../../hooks/useFetchSolution";
 
 export default function HomePage() {
-  const { selectedGenre } = useOutletContext(); // prendi il genere dal layout
-
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
 
   const apiKey = import.meta.env.VITE_API_KEY;
+  const initialUrl = `https://api.rawg.io/api/games?key=${apiKey}&dates=2024-01-01,2024-12-31&page=1`;
 
-  const load = async () => {
-    try {
-      let url = `https://api.rawg.io/api/games?key=${apiKey}&dates=2024-01-01,2024-12-31&page=1`;
+  const { selectedGenre } = useOutletContext();
 
-      // aggiungi il filtro per genere se selezionato
-      if (selectedGenre) {
-        url += `&genres=${selectedGenre}`;
-      }
-
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(response.statusText);
-      const json = await response.json();
-      setData(json);
-    } catch (err) {
-      setError(err.message);
-      setData(null);
-    }
-  };
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   // ricarica ogni volta che cambia il genere
   useEffect(() => {
-    load();
-  }, [selectedGenre]);
+   if (selectedGenre) {
+    const url = `https://api.rawg.io/api/games?key=${apiKey}&genres=${selectedGenre}&page=1`;
+    updateUrl(url); // se usi updateUrl dal custom hook
+    load(); // ricarica i dati
+  }
+}, [selectedGenre]);
 
   return (
     <main className="p-8 bg-[#F5E8C7] min-h-screen">

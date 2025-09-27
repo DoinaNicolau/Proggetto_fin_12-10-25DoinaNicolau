@@ -3,9 +3,10 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
+import Searchbar from "../components/Searchbar";
 
 
-export default function Layout(){
+export default function Layout({ children }){
 
     const [selectedGenre, setSelectedGenre] = useState("");
 
@@ -17,6 +18,11 @@ export default function Layout(){
       {/* Contenuto principale */}
       <div className="flex-1 flex flex-col">
         <Header />
+
+      {/* Searchbar visibile sempre */}
+      <div className="p-4 bg-[#F5E8C7]">
+          <Searchbar />
+      </div>
 
         <main className="flex-1 ">
         
