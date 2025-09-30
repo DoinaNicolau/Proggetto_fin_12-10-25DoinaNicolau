@@ -5,6 +5,10 @@ import GamePage from "../pages/Game/";
 import GenrePage from "../pages/genre/";
 import ErrorPage from "../pages/error";
 import SearchPage from "../pages/search";
+import RegisterPage from "../pages/register/Register";
+import LoginPage from "../pages/login/LoginPage";
+import ProfilePage from "../pages/profile/ProfilePage";
+
 
 export default function Routing(){
     return (
@@ -12,11 +16,14 @@ export default function Routing(){
       <Routes>
      
         <Route element={<Layout />}>
+          <Route path="*" element={<ErrorPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/games/:genre" element={<GenrePage />} />
           <Route path="/games/:slug/:id" element={<GamePage />} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="*" element={<ErrorPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
       </Routes>
     </BrowserRouter>

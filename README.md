@@ -1,3 +1,5 @@
+Progetto Finale – React RAWG Games
+
 Una semplice applicazione React che mostra i giochi più recenti usando l'API di RAWG.
 
 Funzionalità
@@ -12,9 +14,11 @@ Filtraggio dei giochi per genere tramite dropdown interattivo (Headless UI).
 
 Ricerca giochi per nome con query params e pagina dedicata /search.
 
+Gestione utenti: possibilità di aggiungere un nuovo utente e modificare il profilo.
+
 Header con carosello immagini personalizzato (massimo 2 immagini visibili, scorrimento automatico).
 
-Layout con Header, Sidebar e Footer riutilizzabili.
+Layout modulare con Header, Sidebar e Footer riutilizzabili.
 
 Sidebar con effetto trasparente e glass.
 
@@ -57,6 +61,8 @@ src/
 │  │   └─ index.jsx
 │  ├─ searchpage/      # pagina risultati ricerca
 │  │   └─ index.jsx
+│  ├─ userpage/        # gestione utenti (creazione/modifica)
+│  │   └─ index.jsx
 │  └─ error/           # pagina di errore
 │      └─ index.jsx
 ├─ routes/             # Routing.jsx
@@ -78,6 +84,8 @@ GamePage
 GenresDropdown
 
 SearchPage
+
+UserPage (per fetch dei dati utente)
 
 Gestisce:
 
@@ -112,8 +120,6 @@ VITE_API_KEY=la_tua_chiave_api
 
 Note sul design
 
-Tutti i componenti utilizzano Tailwind CSS per stili rapidi e responsive.
-
 Header: sfondo moderno in contrasto con il color sabbia.
 
 Carosello: massimo 2 immagini visibili, scorrimento automatico, immagini arrotondate con ombra.
@@ -126,3 +132,10 @@ Dropdown generi: personalizzato tramite Headless UI, colori coordinati e bordo s
 
 Searchbar: sempre visibile nel layout, permette di cercare giochi per nome e mostrare i risultati nella pagina /search.
 
+Gestione utenti: pagine dedicate per creare e modificare utenti, con interfaccia chiara e semplice.
+
+Se vuoi, posso anche scrivere la sezione “Commit consigliato” per Git così che tutto sia coerente con le modifiche utente e GenrePage.
+
+Vuoi che lo faccia?
+
+ChatGPT può commettere errori. Assicurati di verif

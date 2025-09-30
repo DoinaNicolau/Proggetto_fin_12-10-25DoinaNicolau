@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import HeaderCarousel from "./HeaderCarousel";
 
+
 export default function Header() {
   const [images, setImages] = useState([]);
 

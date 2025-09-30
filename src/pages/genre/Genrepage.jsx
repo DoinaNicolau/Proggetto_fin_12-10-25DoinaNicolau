@@ -1,16 +1,31 @@
 import { useParams } from "react-router-dom";
 import Card from "../../components/Card";
 import useFetchSolution from "../../hooks/useFetchSolution";
+import { useEffect } from "react";
 
 export default function GenrePage() {
   const { genre } = useParams();
   const apiKey = import.meta.env.VITE_API_KEY;
-  const initialUrl = `https://api.rawg.io/api/games?key=${apiKey}&genres=${genre}&page=1`;
 
-  const { data, loading, error } = useFetchSolution(initialUrl);
+  // Inizializziamo il hook con un URL vuoto
+  const { data, loading, error, updateUrl } = useFetchSolution("");
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  // Aggiorniamo l'URL ogni volta che cambia il genere
+  useEffect(() => {
+    if (genre) {
+      const url = `https://api.rawg.io/api/games?key=${apiKey}&genres=${genre}&page=1`;
+      updateUrl(url);
+    }
+  }, [genre, apiKey, updateUrl]);
+
+  if (loading)
+    return (
+      <p className="text-center mt-12 text-gray-700 text-lg">Loading...</p>
+    );
+  if (error)
+    return (
+      <p className="text-center mt-12 text-red-600 text-lg">{error}</p>
+    );
 
   const games = data?.results || [];
 

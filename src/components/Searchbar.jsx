@@ -13,17 +13,23 @@ export default function Searchbar() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex">
+    <form
+      onSubmit={handleSubmit}
+      className="flex w-full max-w-md mx-auto bg-white/70 backdrop-blur-md rounded-lg shadow-md overflow-hidden"
+    >
+      <label htmlFor="search" className="sr-only">Cerca un gioco</label>
       <input
         type="text"
+        id="search"
+        name="search"
         placeholder="Cerca un gioco..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        className="flex-1 p-2 border rounded-l-md focus:outline-none"
+        className="flex-1 p-3 text-gray-800 placeholder-gray-500 focus:outline-none"
       />
       <button
         type="submit"
-        className="bg-blue-500 text-white px-4 rounded-r-md hover:bg-blue-600"
+        className="bg-gradient-to-r from-yellow-400 to-[#F5E8C7] text-black font-semibold px-4 hover:from-yellow-500 hover:to-[#F5E8C7]/90 transition"
       >
         Cerca
       </button>
