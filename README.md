@@ -22,6 +22,10 @@ Layout modulare con Header, Sidebar e Footer riutilizzabili.
 
 Sidebar con effetto trasparente e glass.
 
+Gestione preferiti: aggiunta/rimozione giochi preferiti con persistenza su Supabase.
+
+✅ Lista preferiti nel profilo: ogni utente autenticato può vedere e gestire i propri giochi preferiti direttamente dalla pagina Profilo.
+
 Rotte dinamiche:
 
 /games/:genre → pagina dei giochi di un genere.
@@ -49,6 +53,7 @@ Vite come bundler
 Struttura del progetto
 src/
 ├─ assets/             # immagini, icone
+├─ context/            # SessionContext, FavoritesContext e relativi Provider
 ├─ components/         # Card, LazyLoadGameImage, Header, HeaderCarousel, Footer, Sidebar, GenresDropdown, Searchbar
 ├─ hooks/              # custom hook useFetchSolution.jsx
 ├─ layout/             # Layout principale con Header, Footer e Searchbar
@@ -134,8 +139,3 @@ Searchbar: sempre visibile nel layout, permette di cercare giochi per nome e mos
 
 Gestione utenti: pagine dedicate per creare e modificare utenti, con interfaccia chiara e semplice.
 
-Se vuoi, posso anche scrivere la sezione “Commit consigliato” per Git così che tutto sia coerente con le modifiche utente e GenrePage.
-
-Vuoi che lo faccia?
-
-ChatGPT può commettere errori. Assicurati di verif

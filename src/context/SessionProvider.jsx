@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import SessionContext from "./SessionContext";
 import { supabase } from "../supabase/supabase-client";
-
+import SessionContext from "./SessionContext";
 
 export default function SessionProvider({ children }) {
   const [user, setUser] = useState(null);

@@ -1,5 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import useFetchSolution from "../../hooks/useFetchSolution";
+import ToggleFavorite from "../../components/ToggleFavorite";
+
 
 export default function GamePage() {
   const { id } = useParams();
@@ -45,6 +47,11 @@ export default function GamePage() {
             className="rounded-xl shadow-xl w-full max-h-[500px] object-cover"
           />
         )}
+
+        {/* Bottone ToggleFavorite */}
+        <div className="mt-4">
+          <ToggleFavorite game={game} />
+        </div>
 
         {/* Info principali */}
         <div className="flex flex-wrap gap-6 text-gray-800 font-medium">

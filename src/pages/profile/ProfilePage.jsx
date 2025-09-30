@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { supabase } from "../../supabase/supabase-client";
 import SessionContext from "../../context/SessionContext";
 import Avatar from "../../components/Avatar";
+import FavoritesContext from "../../context/FavoritesContext";
 
 export default function ProfilePage() {   
   const { user } = useContext(SessionContext);
@@ -9,7 +10,9 @@ export default function ProfilePage() {
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [successMsg, setSuccessMsg] = useState(""); 
-  const [errorMsg, setErrorMsg] = useState("");     
+  const [errorMsg, setErrorMsg] = useState(""); 
+  const { favorites, removeFavorite } = useContext(FavoritesContext);
+    
 
   useEffect(() => {
     if (user) getProfile();
@@ -98,53 +101,87 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto mt-12 p-8 bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200">
-      <h1 className="text-3xl font-extrabold text-center text-gray-900 mb-6">
-        Il mio account
-      </h1>
+  <div className="max-w-xl mx-auto mt-12 p-8 bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200">
+    <h1 className="text-3xl font-extrabold text-center text-gray-900 mb-6">
+      Il mio account
+    </h1>
 
-      {successMsg && (
-        <div className="mb-4 p-3 text-green-800 bg-green-100 rounded-md text-center">
-          {successMsg}
-        </div>
-      )}
-      {errorMsg && (
-        <div className="mb-4 p-3 text-red-800 bg-red-100 rounded-md text-center">
-          {errorMsg}
-        </div>
-      )}
-
-      <div className="flex flex-col items-center gap-6">
-        <Avatar
-          url={avatarUrl}
-          size={160}
-          onUpload={handleAvatarUpload}
-        />
-
-        <input
-          type="text"
-          id="username"           // ID unico
-          name="username"         // Nome per i dati del form
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-        />
-
-<label htmlFor="username">Username</label> 
-
-        <button
-          onClick={updateProfile}
-          disabled={loading}
-          className={`w-full py-3 rounded-xl text-white font-semibold shadow-md transition ${
-            loading
-              ? "bg-indigo-300 cursor-not-allowed"
-              : "bg-indigo-600 hover:bg-indigo-700"
-          }`}
-        >
-          {loading ? "Salvataggio..." : "Aggiorna profilo"}
-        </button>
+    {successMsg && (
+      <div className="mb-4 p-3 text-green-800 bg-green-100 rounded-md text-center">
+        {successMsg}
       </div>
+    )}
+    {errorMsg && (
+      <div className="mb-4 p-3 text-red-800 bg-red-100 rounded-md text-center">
+        {errorMsg}
+      </div>
+    )}
+
+    <div className="flex flex-col items-center gap-6">
+      <Avatar
+        url={avatarUrl}
+        size={160}
+        onUpload={handleAvatarUpload}
+      />
+
+      <input
+        type="text"
+        id="username"
+        name="username"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+      />
+
+      <label htmlFor="username">Username</label> 
+
+      <button
+        onClick={updateProfile}
+        disabled={loading}
+        className={`w-full py-3 rounded-xl text-white font-semibold shadow-md transition ${
+          loading
+            ? "bg-indigo-300 cursor-not-allowed"
+            : "bg-indigo-600 hover:bg-indigo-700"
+        }`}
+      >
+        {loading ? "Salvataggio..." : "Aggiorna profilo"}
+      </button>
     </div>
-  );
+
+    {/* 👇 QUI sotto aggiungi la lista dei preferiti */}
+    <div className="mt-10 w-full">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">I miei preferiti</h2>
+
+      {favorites.length === 0 ? (
+        <p className="text-gray-600">Non hai ancora aggiunto giochi ai preferiti.</p>
+      ) : (
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {favorites.map((fav) => (
+            <li
+              key={fav.game_id}
+              className="flex items-center gap-4 p-4 bg-gray-100 rounded-xl shadow"
+            >
+              <img
+                src={fav.game_image}
+                alt={fav.game_name}
+                className="w-16 h-16 rounded-lg object-cover"
+              />
+              <div className="flex-1">
+                <p className="font-semibold text-gray-800">{fav.game_name}</p>
+              </div>
+              <button
+                onClick={() => removeFavorite(fav.game_id)}
+                className="px-3 py-1 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600"
+              >
+                Rimuovi
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </div>
+);
+
 }
