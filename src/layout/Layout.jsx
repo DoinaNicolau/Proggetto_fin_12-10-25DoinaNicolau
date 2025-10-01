@@ -5,35 +5,30 @@ import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
 import Searchbar from "../components/Searchbar";
 
+export default function Layout() {
+  const [selectedGenre, setSelectedGenre] = useState("");
 
-export default function Layout({ children }){
-
-    const [selectedGenre, setSelectedGenre] = useState("");
-
-    return (
-    <div className="flex min-h-screen">
+  return (
+    <div className="flex min-h-screen w-full">
       {/* Sidebar */}
       <Sidebar onGenreSelect={setSelectedGenre} />
 
       {/* Contenuto principale */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col w-full">
         <Header />
 
-      {/* Searchbar visibile sempre */}
-      <div className="p-4 bg-[#F5E8C7]">
+        {/* Searchbar  */}
+        <div className="p-2">
           <Searchbar />
-      </div>
+        </div>
 
-        <main className="flex-1 ">
-        
-          <Outlet context={{ 
-            selectedGenre,
-             setSelectedGenre
-            }} />
-        </main>
+        {/* Outlet */}
+        <div className="flex-1 w-full">
+          <Outlet context={{ selectedGenre, setSelectedGenre }} />
+        </div>
 
         <Footer />
       </div>
     </div>
-    );
+  );
 }

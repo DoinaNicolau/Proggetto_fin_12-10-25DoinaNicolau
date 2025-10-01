@@ -5,21 +5,40 @@ import { useSession } from "../context/useSession";
 
 export default function FavoritesProvider({ children }) {
   const [favorites, setFavorites] = useState([]);
-  const { user } = useSession(); // <-- qui usiamo user invece di session
+  const { user } = useSession();
 
+  // Fetch dei preferiti dal DB
   const getFavorites = useCallback(async () => {
     if (!user) return;
     const { data: favourites, error } = await supabase
       .from("favorites")
       .select("*")
       .eq("user_id", user.id);
-    if (error) console.log(error);
-    else setFavorites(favourites);
+
+    if (error) {
+      console.error("Error fetching favorites:", error);
+    } else {
+      setFavorites(favourites);
+    }
   }, [user]);
 
+  // Aggiungi un preferito
   const addFavorite = async (game) => {
     if (!user) return;
-    await supabase
+
+    // Aggiorna subito lo stato locale
+    setFavorites((prev) => [
+      ...prev,
+      {
+        user_id: user.id,
+        game_id: game.id,
+        game_name: game.name,
+        game_image: game.background_image,
+      },
+    ]);
+
+    // Inserisci nel DB
+    const { error } = await supabase
       .from("favorites")
       .insert([
         {
@@ -28,19 +47,37 @@ export default function FavoritesProvider({ children }) {
           game_name: game.name,
           game_image: game.background_image,
         },
-      ])
-      .select();
+      ]);
+
+    if (error) {
+      console.error("Error adding favorite:", error);
+      // Se c'è errore, rimuovi dal locale
+      setFavorites((prev) => prev.filter((f) => f.game_id !== game.id));
+    }
   };
 
+  // Rimuovi un preferito
   const removeFavorite = async (gameId) => {
     if (!user) return;
-    await supabase
+
+    // Aggiorna subito lo stato locale
+    setFavorites((prev) => prev.filter((f) => f.game_id !== gameId));
+
+    // Rimuovi dal DB
+    const { error } = await supabase
       .from("favorites")
       .delete()
-      .eq("game_id", gameId)
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .eq("game_id", gameId);
+
+    if (error) {
+      console.error("Error removing favorite:", error);
+      // Se c'è errore, ricarica i preferiti
+      getFavorites();
+    }
   };
 
+  // Effetto per fetch iniziale e subscription real-time
   useEffect(() => {
     if (user) getFavorites();
 

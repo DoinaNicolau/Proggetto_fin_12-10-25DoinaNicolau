@@ -5,10 +5,9 @@ import useFetchSolution from "../hooks/useFetchSolution";
 
 export default function GenresDropdown({ onSelect }) {
   const navigate = useNavigate();
-
   const apiKey = import.meta.env.VITE_API_KEY;
   const initialUrl = `https://api.rawg.io/api/genres?key=${apiKey}`;
-  
+
   // Uso del custom hook
   const { data, loading, error } = useFetchSolution(initialUrl);
 
@@ -21,23 +20,30 @@ export default function GenresDropdown({ onSelect }) {
     <div className="w-full">
       {loading && <p>Loading genres...</p>}
       {error && <p className="text-red-600">Error: {error}</p>}
-      
+
       {data?.results && (
         <Listbox value={null} onChange={handleChange}>
           <div className="relative">
+            {/* Bottone dropdown */}
             <Listbox.Button className="relative w-full cursor-pointer rounded-md bg-transparent border border-gray-400 py-2 px-3 text-left focus:outline-none focus:ring-2 focus:ring-[#B8A382]">
-              <span className="block truncate">
-                Seleziona un genere
-              </span>
+              <span className="block truncate">Seleziona un genere</span>
             </Listbox.Button>
 
+            {/* Lista dropdown */}
             <Transition
               as={Fragment}
               leave="transition ease-in duration-100"
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Listbox.Options className="absolute left-0 mt-1 w-full rounded-md bg-[#CBB79E]/90 backdrop-blur-md text-black shadow-md ring-1 ring-black/5 focus:outline-none z-20">
+              <Listbox.Options
+                className={`
+                  absolute left-0 mt-1 w-full rounded-md 
+                  bg-[#CBB79E]/90 backdrop-blur-md text-black shadow-md 
+                  ring-1 ring-black/5 focus:outline-none z-20
+                  max-h-60 sm:max-h-[80vh] overflow-y-auto sm:overflow-y-visible
+                `}
+              >
                 {data.results.map((genre) => (
                   <Listbox.Option
                     key={genre.id}

@@ -1,2 +1,2 @@
 
-export { default } from "./GamePage";
+export { default } from "./Gamepage";

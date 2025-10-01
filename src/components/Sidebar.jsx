@@ -15,9 +15,7 @@ export default function Sidebar({ onGenreSelect }) {
         setAvatarUrl(""); 
         return;
       }
-
       try {
-        
         const { data, error } = await supabase
           .from("profiles")
           .select("avatar_url")
@@ -27,12 +25,10 @@ export default function Sidebar({ onGenreSelect }) {
         if (error) throw error;
 
         if (data?.avatar_url) {
-       
           const { data: publicData, error: urlError } = supabase
             .storage
             .from("avatars") 
             .getPublicUrl(data.avatar_url);
-        
 
           if (urlError) throw urlError;
 
@@ -52,7 +48,7 @@ export default function Sidebar({ onGenreSelect }) {
   return (
     <>
       <button
-        className="fixed top-4 left-4 z-50 p-2 rounded bg-[#E6D5B8]/70 backdrop-blur-md border border-white/30 text-black shadow-md hover:bg-[#E6D5B8]/90 transition"
+        className="fixed top-4 left-4 z-50 p-2 rounded bg-[#E6D5B8]/50 backdrop-blur-md border border-white/20 text-black shadow-md hover:bg-[#E6D5B8]/70 transition"
         onClick={() => setOpen(!open)}
         aria-label="Apri/chiudi menu"
       >
@@ -60,10 +56,10 @@ export default function Sidebar({ onGenreSelect }) {
       </button>
 
       <aside
-        className={`fixed top-0 left-0 h-full w-64 p-4 pt-16 transform ${
+        className={`fixed top-4 left-4 w-64 pb-2 p-4 transform ${
           open ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out z-40
-        bg-[#E6D5B8]/70 backdrop-blur-md border border-white/30 shadow-lg text-black`}
+        bg-[#E6D5B8]/40 backdrop-blur-lg border border-white/20 shadow-lg text-black rounded-lg h-auto`}
         aria-label="Sidebar di navigazione"
       >
         <header className="flex flex-col items-center mb-6">
@@ -126,12 +122,6 @@ export default function Sidebar({ onGenreSelect }) {
                 </li>
               </>
             )}
-
-            <li>
-              <a href="#" className="hover:text-yellow-700">
-                Impostazioni
-              </a>
-            </li>
           </ul>
 
           <div className="mt-4">

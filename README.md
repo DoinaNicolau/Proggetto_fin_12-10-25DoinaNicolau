@@ -1,6 +1,6 @@
 Progetto Finale – React RAWG Games
 
-Una semplice applicazione React che mostra i giochi più recenti usando l'API di RAWG.
+Una semplice applicazione React che mostra i giochi più recenti usando l'API di RAWG e include una chatbox interattiva.
 
 Funzionalità
 
@@ -16,6 +16,8 @@ Ricerca giochi per nome con query params e pagina dedicata /search.
 
 Gestione utenti: possibilità di aggiungere un nuovo utente e modificare il profilo.
 
+Chatbox in tempo reale: permette agli utenti di inviare e ricevere messaggi direttamente nell'app.
+
 Header con carosello immagini personalizzato (massimo 2 immagini visibili, scorrimento automatico).
 
 Layout modulare con Header, Sidebar e Footer riutilizzabili.
@@ -26,7 +28,7 @@ Gestione preferiti: aggiunta/rimozione giochi preferiti con persistenza su Supab
 
 ✅ Lista preferiti nel profilo: ogni utente autenticato può vedere e gestire i propri giochi preferiti direttamente dalla pagina Profilo.
 
-Rotte dinamiche:
+Rotte dinamiche
 
 /games/:genre → pagina dei giochi di un genere.
 
@@ -34,7 +36,11 @@ Rotte dinamiche:
 
 /search?query=<nome_gioco> → pagina risultati ricerca.
 
-Responsive design ottimizzato per desktop e mobile.
+/chat → pagina dedicata alla chat (opzionale se integrata nel layout principale).
+
+Responsive design
+
+Ottimizzato per desktop e mobile.
 
 Tecnologie
 
@@ -50,11 +56,15 @@ react-lazy-load-image-component
 
 Vite come bundler
 
+Supabase (per gestione utenti e preferiti)
+
+Chatbox real-time: WebSocket / Firebase / Supabase Realtime (a seconda dell’implementazione)
+
 Struttura del progetto
 src/
 ├─ assets/             # immagini, icone
-├─ context/            # SessionContext, FavoritesContext e relativi Provider
-├─ components/         # Card, LazyLoadGameImage, Header, HeaderCarousel, Footer, Sidebar, GenresDropdown, Searchbar
+├─ context/            # SessionContext, FavoritesContext, ChatContext e relativi Provider
+├─ components/         # Card, LazyLoadGameImage, Header, HeaderCarousel, Footer, Sidebar, GenresDropdown, Searchbar, Chatbox
 ├─ hooks/              # custom hook useFetchSolution.jsx
 ├─ layout/             # Layout principale con Header, Footer e Searchbar
 ├─ pages/              # tutte le pagine
@@ -67,6 +77,8 @@ src/
 │  ├─ searchpage/      # pagina risultati ricerca
 │  │   └─ index.jsx
 │  ├─ userpage/        # gestione utenti (creazione/modifica)
+│  │   └─ index.jsx
+│  ├─ chatpage/        # (opzionale) pagina chatbox
 │  │   └─ index.jsx
 │  └─ error/           # pagina di errore
 │      └─ index.jsx
@@ -139,3 +151,4 @@ Searchbar: sempre visibile nel layout, permette di cercare giochi per nome e mos
 
 Gestione utenti: pagine dedicate per creare e modificare utenti, con interfaccia chiara e semplice.
 
+Chatbox: integrata nel layout principale o in pagina dedicata, design coordinato con il tema glass e colori dell’app.
