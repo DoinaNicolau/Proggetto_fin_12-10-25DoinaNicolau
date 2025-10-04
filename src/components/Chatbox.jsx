@@ -5,7 +5,7 @@ import RealtimeChat from "./RealtimeChat";
 
 export default function Chatbox({ game }) {
   
-  // Per il debug della chiave RAWG (anche se non usata qui)
+  
   const rawgApiKey = import.meta.env.VITE_API_KEY; 
 
 
@@ -66,21 +66,19 @@ export default function Chatbox({ game }) {
 
       {/* Form di invio */}
       <footer className="p-4 border-t border-gray-700">
-        <form onSubmit={handleMessageSubmit} className="flex gap-3">
+        <form onSubmit={handleMessageSubmit} className="flex flex-wrap gap-3">
           <input
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder={user ? "Scrivi il tuo messaggio..." : "Effettua il login per chattare"}
             disabled={!user}
-            // Stili per l'input in tema scuro
-            className="flex-1 px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
+            className="flex-1 min-w-0 px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
           />
           <button
             type="submit"
             disabled={!user || message.trim().length === 0}
-            // Stili per il pulsante
-            className="px-6 py-2 bg-red-600 text-white font-heading rounded-md hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+            className="px-6 py-2 bg-red-600 text-white font-heading rounded-md hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             INVIA
           </button>

@@ -4,6 +4,7 @@ import { supabase } from "../../supabase/supabase-client";
 import SessionContext from "../../context/SessionContext";
 import Avatar from "../../components/Avatar";
 import FavoritesContext from "../../context/FavoritesContext";
+import RatingInput from "../../components/RatingInput"; 
 
 export default function ProfilePage() {   
   const { user } = useContext(SessionContext);
@@ -181,6 +182,9 @@ export default function ProfilePage() {
                     />
                     <div className="flex-1">
                       <p className="font-semibold text-gray-800">{fav.game_name}</p>
+                      
+                      {/* ⭐ Votazione direttamente in profilo */}
+                      <RatingInput gameId={fav.game_id} />
                     </div>
                   </Link>
 

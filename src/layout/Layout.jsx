@@ -11,7 +11,7 @@ export default function Layout() {
 
   return (
     
-      <div className="min-h-screen flex flex-col  bg-dark-bg text-white">
+      <div className="min-h-screen flex flex-col text-white">
       
       <Sidebar />
 

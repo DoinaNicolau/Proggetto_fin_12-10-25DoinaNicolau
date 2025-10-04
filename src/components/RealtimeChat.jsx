@@ -75,7 +75,7 @@ export default function RealtimeChat({ game }) {
               className={`max-w-xs md:max-w-md px-4 py-3 rounded-2xl ${
                 isCurrentUser
                   ? 'bg-accent text-primary rounded-br-none'
-                  : 'bg-dark-bg text-secondary rounded-bl-none'
+                  : 'text-secondary rounded-bl-none'
               }`}
             >
               {!isCurrentUser && (

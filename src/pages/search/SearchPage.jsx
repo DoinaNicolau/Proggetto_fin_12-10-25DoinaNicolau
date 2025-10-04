@@ -23,7 +23,7 @@ export default function SearchPage() {
   if (!data || data.results.length === 0) return <p>Nessun risultato trovato</p>;
 
   return (
-    <main className="p-8 bg-[#F5E8C7] min-h-screen">
+    <main className="p-8  min-h-screen">
       <h1 className="text-2xl font-bold mb-6">Risultati per: "{query}"</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
         {data.results.map((game) => (

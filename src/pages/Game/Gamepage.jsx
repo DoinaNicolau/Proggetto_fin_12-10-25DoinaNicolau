@@ -1,13 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useContext } from "react";
 import useFetchSolution from "../../hooks/useFetchSolution";
 import ToggleFavorite from "../../components/ToggleFavorite";
 import Chatbox from "../../components/Chatbox";
 import Card from "../../components/Card"; 
+import SessionContext from "../../context/SessionContext";
+import RatingInput from "../../components/RatingInput"; 
 
-// Componente per lo stato di caricamento (Skeleton Loader)
+// Skeleton Loader
 const GamePageSkeleton = () => (
   <div className="animate-pulse">
-    {/* Banner placeholder */}
     <div className="h-[50vh] bg-gray-800"></div> 
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -29,16 +31,17 @@ export default function GamePage() {
   const navigate = useNavigate();
   const apiKey = import.meta.env.VITE_API_KEY;
 
+  const { user } = useContext(SessionContext);
+
   // Fetch per i dettagli del gioco principale
   const gameDetailUrl = `https://api.rawg.io/api/games/${id}?key=${apiKey}`;
   const { data: game, loading, error } = useFetchSolution(gameDetailUrl);
 
- 
+  // Fetch per i giochi simili
   const suggestedGamesUrl = `https://api.rawg.io/api/games/${id}/game-series?key=${apiKey}&page_size=4`;
   const { data: suggestedGames } = useFetchSolution(suggestedGamesUrl);
 
   if (loading) return <GamePageSkeleton />;
-  // Assumiamo che 'text-accent' sia red-600 o simile per il tema scuro
   if (error) return <main className="text-center py-20 text-red-600">Errore: {error}</main>;
   if (!game) return null;
 
@@ -56,11 +59,11 @@ export default function GamePage() {
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent" />
       </header>
 
-      {/* --- Contenuto Principale (Layout a 2 colonne) --- */}
+      {/* --- Contenuto Principale --- */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 relative z-10">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           
-          {/* --- Colonna Sinistra (Info Principali - Sticky) --- */}
+          {/* --- Colonna Sinistra --- */}
           <aside className="lg:col-span-1 lg:sticky lg:top-24 self-start">
             <h1 className="text-5xl font-heading text-white mb-4">{game.name}</h1>
             
@@ -79,10 +82,16 @@ export default function GamePage() {
                   <span className="text-gray-400">Generi:</span>
                   <span className="text-white text-right">{game.genres.map(g => g.name).join(", ")}</span>
                 </li>
-                 <li className="flex justify-between">
+                <li className="flex justify-between">
                   <span className="text-gray-400">Sviluppatore:</span>
                   <span className="text-white text-right">{game.developers[0]?.name || "N/A"}</span>
                 </li>
+                {user && (
+                  <li className="flex justify-between items-center">
+                    <span className="text-gray-400">Il tuo voto:</span>
+                    <RatingInput gameId={id} user={user} />
+                  </li>
+                )}
               </ul>
               <div className="mt-6 flex justify-center">
                 <ToggleFavorite game={game} />
@@ -90,9 +99,8 @@ export default function GamePage() {
             </section>
           </aside>
 
-          {/* --- Colonna Destra (Descrizione e Chat) --- */}
+          {/* --- Colonna Destra --- */}
           <div className="lg:col-span-2 mt-8 lg:mt-0">
-            
             <article className={minimalCardClass}> 
               <h2 className="text-3xl font-heading text-red-600 mb-4">DESCRIZIONE</h2>
               <p className="font-body text-gray-400 leading-relaxed whitespace-pre-line">
@@ -106,7 +114,6 @@ export default function GamePage() {
       </section>
 
       {/* --- Sezione Giochi Simili ---*/}
-
       {suggestedGames?.results?.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
           <h2 className="text-4xl font-heading text-red-600 mb-8">POTREBBE INTERESSARTI ANCHE</h2>

@@ -19,7 +19,7 @@ export default function HeaderCarousel({ games = [] }) {
 
     return (
       <>
-        <div className="absolute inset-0 bg-dark-bg" />
+        <div className="absolute inset-0" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
       </>
     );

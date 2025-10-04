@@ -8,16 +8,16 @@ import SearchPage from "../pages/search";
 import RegisterPage from "../pages/register/Register";
 import LoginPage from "../pages/login/LoginPage";
 import ProfilePage from "../pages/profile/ProfilePage";
+import PlatformPage from "../pages/platforms/PlatformPage"; 
 
-
-export default function Routing(){
-    return (
+export default function Routing() {
+  return (
     <BrowserRouter>
       <Routes>
-     
         <Route element={<Layout />}>
           <Route path="*" element={<ErrorPage />} />
           <Route path="/" element={<HomePage />} />
+          <Route path="/platforms/:slug" element={<PlatformPage />} />
           <Route path="/games/:genre" element={<GenrePage />} />
           <Route path="/games/:slug/:id" element={<GamePage />} />
           <Route path="/search" element={<SearchPage />} />
@@ -27,5 +27,5 @@ export default function Routing(){
         </Route>
       </Routes>
     </BrowserRouter>
-    );
+  );
 }

@@ -40,9 +40,9 @@ export default function Searchbar() {
         placeholder="Cerca un gioco..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
- 
-        className="w-full pl-10 pr-4 py-2 rounded-md bg-card-bg border border-secondary/30 text-primary placeholder-secondary/60 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all"
+        className="w-full pl-10 pr-4 py-2 rounded-md bg-transparent border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
       />
+
     </form>
   );
 }

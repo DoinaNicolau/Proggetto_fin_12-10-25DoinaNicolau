@@ -2,7 +2,6 @@ import { useParams } from "react-router-dom";
 import Card from "../../components/Card";
 import useFetchSolution from "../../hooks/useFetchSolution";
 import { useEffect } from "react";
-// 1. Importa il Dropdown (assumendo che si trovi in questo percorso)
 import GenresDropdown from "../../components/GenresDropdown"; 
 
 
@@ -10,14 +9,12 @@ export default function GenrePage() {
   const { genre } = useParams();
   const apiKey = import.meta.env.VITE_API_KEY;
 
-  // Inizializziamo il hook con un URL vuoto
+  // hook con un URL vuoto
   const { data, loading, error, updateUrl } = useFetchSolution("");
 
 
   useEffect(() => {
     if (genre) {
-      // Nota: Ho aggiunto &page_size=200 per prendere più giochi in una volta, 
-      // ma se vuoi la paginazione dovrai estendere useFetchSolution.
       const url = `https://api.rawg.io/api/games?key=${apiKey}&genres=${genre}&page=1`;
       updateUrl(url);
     }

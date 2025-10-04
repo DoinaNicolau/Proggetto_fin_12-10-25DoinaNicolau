@@ -17,7 +17,6 @@ const CloseIcon = () => (
   </svg>
 );
 
-// Rinomina la funzione se il file si chiama Sidebar.jsx
 export default function Sidebar() {
   const { user, logout } = useContext(SessionContext);
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -39,7 +38,7 @@ export default function Sidebar() {
     getAvatar();
   }, [user]);
   
-  const activeColor = '#dc2626'; // red-600
+  const activeColor = '#dc2626'; 
   const activeLinkStyle = ({ isActive }) => isActive ? { color: activeColor } : {};
   const navLinkClass = "text-lg text-gray-400 hover:text-red-500 transition-colors";
   const mobileNavLinkClass = "text-3xl text-white hover:text-red-500";
@@ -106,7 +105,7 @@ export default function Sidebar() {
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="fixed inset-0 bg-gray-900/95 backdrop-blur-lg z-40 flex flex-col items-center justify-start pt-24 md:hidden min-h-screen"
+            className="fixed inset-0 bg-gray-800/95 backdrop-blur-lg z-40 flex flex-col items-center justify-start pt-24 md:hidden min-h-screen"
           >
             <ul className="flex flex-col items-center text-center gap-8">
               {navLinks.map(link => (<li key={link.to}><NavLink to={link.to} style={activeLinkStyle} className={mobileNavLinkClass} onClick={() => setIsMobileMenuOpen(false)}>{link.text}</NavLink></li>))}
