@@ -1,135 +1,131 @@
 import { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
-import GenresDropdown from "./GenresDropdown";
+import { Link, NavLink } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import SessionContext from "../context/SessionContext";
 import { supabase } from "../supabase/supabase-client";
+import Searchbar from "./Searchbar";
 
-export default function Sidebar({ onGenreSelect }) {
-  const [open, setOpen] = useState(false);
+// --- Icone SVG ---
+const MenuIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+  </svg>
+);
+const CloseIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+);
+
+// Rinomina la funzione se il file si chiama Sidebar.jsx
+export default function Sidebar() {
   const { user, logout } = useContext(SessionContext);
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const getAvatar = async () => {
-      if (!user) {
-        setAvatarUrl(""); 
-        return;
-      }
+      if (!user) return setAvatarUrl("");
       try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("avatar_url")
-          .eq("id", user.id)
-          .single();
-
-        if (error) throw error;
-
-        if (data?.avatar_url) {
-          const { data: publicData, error: urlError } = supabase
-            .storage
-            .from("avatars") 
-            .getPublicUrl(data.avatar_url);
-
-          if (urlError) throw urlError;
-
-          setAvatarUrl(publicData.publicUrl);
-        } else {
-          setAvatarUrl(""); 
+        const { data: profileData } = await supabase.from("profiles").select("avatar_url").eq("id", user.id).single();
+        if (profileData?.avatar_url) {
+          const { data: storageData } = supabase.storage.from("avatars").getPublicUrl(profileData.avatar_url);
+          setAvatarUrl(storageData.publicUrl);
         }
       } catch (err) {
         console.error("Errore recupero avatar:", err.message);
-        setAvatarUrl("");
       }
     };
-
     getAvatar();
   }, [user]);
+  
+  const activeColor = '#dc2626'; // red-600
+  const activeLinkStyle = ({ isActive }) => isActive ? { color: activeColor } : {};
+  const navLinkClass = "text-lg text-gray-400 hover:text-red-500 transition-colors";
+  const mobileNavLinkClass = "text-3xl text-white hover:text-red-500";
+
+  const navLinks = [ { to: "/", text: "HOME" }, { to: "/games/action", text: "GIOCHI" } ];
+
+  const mobileMenuVariants = {
+    hidden: { opacity: 0, transition: { duration: 0.3 } },
+    visible: { opacity: 1, transition: { duration: 0.3 } }
+  };
 
   return (
     <>
-      <button
-        className="fixed top-4 left-4 z-50 p-2 rounded bg-[#E6D5B8]/50 backdrop-blur-md border border-white/20 text-black shadow-md hover:bg-[#E6D5B8]/70 transition"
-        onClick={() => setOpen(!open)}
-        aria-label="Apri/chiudi menu"
-      >
-        {open ? "×" : "☰"}
-      </button>
-
-      <aside
-        className={`fixed top-4 left-4 w-64 pb-2 p-4 transform ${
-          open ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out z-40
-        bg-[#E6D5B8]/40 backdrop-blur-lg border border-white/20 shadow-lg text-black rounded-lg h-auto`}
-        aria-label="Sidebar di navigazione"
-      >
-        <header className="flex flex-col items-center mb-6">
-          {avatarUrl ? (
-            <img
-              src={avatarUrl}
-              alt="Avatar utente"
-              className="w-16 h-16 rounded-full mb-2 object-cover border-2 border-white"
-            />
-          ) : (
-            <div className="w-16 h-16 rounded-full mb-2 bg-gray-300 flex items-center justify-center text-white">
-              ?
-            </div>
-          )}
-          <h2 className="text-xl font-bold">Menu</h2>
-          {user && (
-            <p className="mt-1 text-sm font-medium text-gray-700 text-center">
-              {user.email}
-            </p>
-          )}
-        </header>
-
-        <nav>
-          <ul className="space-y-4 mb-6">
-            <li>
-              <Link to="/" className="hover:text-yellow-700" onClick={() => setOpen(false)}>
-                Homepage
+      <nav className="sticky top-0 z-50 bg-gray-900/80 backdrop-blur-lg border-b border-gray-700/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            <div className="flex items-center gap-4 sm:gap-8">
+              <Link to="/" className="text-2xl text-white hover:text-red-500 transition-colors flex-shrink-0">
+                GAMES HUB
               </Link>
-            </li>
-
-            {!user && (
-              <>
-                <li>
-                  <Link to="/login" className="hover:text-yellow-700" onClick={() => setOpen(false)}>
-                    Login
+              <div className="hidden md:flex items-center space-x-8">
+                {navLinks.map(link => (
+                  <NavLink key={link.to} to={link.to} style={activeLinkStyle} className={navLinkClass}>
+                    {link.text}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
+            <div className="hidden md:flex items-center gap-4">
+              <Searchbar />
+              {user ? (
+                <div className="flex items-center gap-4">
+                  <Link to="/profile" className="flex-shrink-0">
+                    <img src={avatarUrl || "https://via.placeholder.com/40"} alt="Avatar" className="w-10 h-10 rounded-full object-cover border-2 border-gray-600/50" />
                   </Link>
-                </li>
-                <li>
-                  <Link to="/register" className="hover:text-yellow-700" onClick={() => setOpen(false)}>
-                    Register
-                  </Link>
-                </li>
-              </>
-            )}
-
-            {user && (
-              <>
-                <li>
-                  <Link to="/profile" className="hover:text-yellow-700" onClick={() => setOpen(false)}>
-                    Profilo
-                  </Link>
-                </li>
-                <li>
-                  <button
-                    onClick={logout}
-                    className="hover:text-red-600 font-semibold"
-                  >
+                  <button onClick={logout} className="bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700 transition-colors flex-shrink-0">
                     Logout
                   </button>
-                </li>
-              </>
-            )}
-          </ul>
-
-          <div className="mt-4">
-            <h3 className="text-sm font-semibold mb-2">Filtra per genere</h3>
-            <GenresDropdown onSelect={onGenreSelect} />
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link to="/login" className="text-gray-400 hover:text-white px-4 py-2 rounded-md text-sm transition-colors">
+                    LOGIN
+                  </Link>
+                  <Link to="/register" className="bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700 transition-colors flex-shrink-0">
+                    REGISTRATI
+                  </Link>
+                </div>
+              )}
+            </div>
+            <div className="md:hidden z-50">
+              <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white">
+                {isMobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
+              </button>
+            </div>
           </div>
-        </nav>
-      </aside>
+        </div>
+      </nav>
+
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            variants={mobileMenuVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="fixed inset-0 bg-gray-900/95 backdrop-blur-lg z-40 flex flex-col items-center justify-start pt-24 md:hidden min-h-screen"
+          >
+            <ul className="flex flex-col items-center text-center gap-8">
+              {navLinks.map(link => (<li key={link.to}><NavLink to={link.to} style={activeLinkStyle} className={mobileNavLinkClass} onClick={() => setIsMobileMenuOpen(false)}>{link.text}</NavLink></li>))}
+              <li className="w-full max-w-xs pt-4"><Searchbar /></li>
+              {user ? (
+                <>
+                  <li className="pt-4"><Link to="/profile" className={mobileNavLinkClass} onClick={() => setIsMobileMenuOpen(false)}>Profilo</Link></li>
+                  <li><button onClick={() => { logout(); setIsMobileMenuOpen(false); }} className={`${mobileNavLinkClass} text-red-500`}>Logout</button></li>
+                </>
+              ) : (
+                <>
+                  <li className="pt-4"><Link to="/login" className={mobileNavLinkClass} onClick={() => setIsMobileMenuOpen(false)}>Login</Link></li>
+                  <li><Link to="/register" className={mobileNavLinkClass} onClick={() => setIsMobileMenuOpen(false)}>Registrati</Link></li>
+                </>
+              )}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

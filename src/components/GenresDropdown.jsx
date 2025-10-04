@@ -8,7 +8,6 @@ export default function GenresDropdown({ onSelect }) {
   const apiKey = import.meta.env.VITE_API_KEY;
   const initialUrl = `https://api.rawg.io/api/genres?key=${apiKey}`;
 
-  // Uso del custom hook
   const { data, loading, error } = useFetchSolution(initialUrl);
 
   const handleChange = (genre) => {
@@ -18,15 +17,23 @@ export default function GenresDropdown({ onSelect }) {
 
   return (
     <div className="w-full">
-      {loading && <p>Loading genres...</p>}
-      {error && <p className="text-red-600">Error: {error}</p>}
+      {loading && <p className="text-sm text-gray-400">Caricamento generi...</p>}
+      {error && <p className="text-red-500">Errore: {error}</p>}
 
       {data?.results && (
         <Listbox value={null} onChange={handleChange}>
           <div className="relative">
             {/* Bottone dropdown */}
-            <Listbox.Button className="relative w-full cursor-pointer rounded-md bg-transparent border border-gray-400 py-2 px-3 text-left focus:outline-none focus:ring-2 focus:ring-[#B8A382]">
-              <span className="block truncate">Seleziona un genere</span>
+             <Listbox.Button
+              className="
+                relative w-full cursor-pointer rounded-md 
+                bg-gray-800 text-white border border-gray-700 
+                py-2 px-3 text-left font-medium
+                focus:outline-none focus:ring-2 focus:ring-red-500 
+                transition-colors hover:bg-gray-700
+              "
+            >
+              <span className="block truncate">🎮 Seleziona un genere</span>
             </Listbox.Button>
 
             {/* Lista dropdown */}
@@ -37,20 +44,24 @@ export default function GenresDropdown({ onSelect }) {
               leaveTo="opacity-0"
             >
               <Listbox.Options
-                className={`
+                className="
                   absolute left-0 mt-1 w-full rounded-md 
-                  bg-[#CBB79E]/90 backdrop-blur-md text-black shadow-md 
-                  ring-1 ring-black/5 focus:outline-none z-20
-                  max-h-60 sm:max-h-[80vh] overflow-y-auto sm:overflow-y-visible
-                `}
+                  bg-gray-800 text-white shadow-xl 
+                  ring-1 ring-gray-700 focus:outline-none z-20
+                  max-h-60 overflow-y-auto 
+                  // CLASSE AGGIUNTA PER NASCONDERE LA SCROLLBAR
+                  hide-scrollbar
+                "
               >
                 {data.results.map((genre) => (
                   <Listbox.Option
                     key={genre.id}
                     value={genre}
                     className={({ active }) =>
-                      `cursor-pointer select-none py-2 pl-3 pr-3 rounded ${
-                        active ? "bg-[#B8A382] text-white" : "text-black"
+                      `cursor-pointer select-none py-2 pl-3 pr-3 rounded-md transition-colors ${
+                        active
+                          ? "bg-red-600 text-white" 
+                          : "text-gray-300 hover:bg-gray-700"
                       }`
                     }
                   >

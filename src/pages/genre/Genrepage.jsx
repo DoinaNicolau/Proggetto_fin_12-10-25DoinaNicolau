@@ -2,6 +2,9 @@ import { useParams } from "react-router-dom";
 import Card from "../../components/Card";
 import useFetchSolution from "../../hooks/useFetchSolution";
 import { useEffect } from "react";
+// 1. Importa il Dropdown (assumendo che si trovi in questo percorso)
+import GenresDropdown from "../../components/GenresDropdown"; 
+
 
 export default function GenrePage() {
   const { genre } = useParams();
@@ -10,9 +13,11 @@ export default function GenrePage() {
   // Inizializziamo il hook con un URL vuoto
   const { data, loading, error, updateUrl } = useFetchSolution("");
 
-  // Aggiorniamo l'URL ogni volta che cambia il genere
+
   useEffect(() => {
     if (genre) {
+      // Nota: Ho aggiunto &page_size=200 per prendere più giochi in una volta, 
+      // ma se vuoi la paginazione dovrai estendere useFetchSolution.
       const url = `https://api.rawg.io/api/games?key=${apiKey}&genres=${genre}&page=1`;
       updateUrl(url);
     }
@@ -20,7 +25,7 @@ export default function GenrePage() {
 
   if (loading)
     return (
-      <p className="text-center mt-12 text-gray-700 text-lg">Loading...</p>
+      <p className="text-center mt-12 text-gray-400 text-lg">Loading...</p> 
     );
   if (error)
     return (
@@ -29,9 +34,31 @@ export default function GenrePage() {
 
   const games = data?.results || [];
 
+
+  const formatGenreName = (slug) => {
+
+      if (!slug) return '';
+      return slug
+          .split('-')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+  }
+
   return (
-    <main className="p-8 bg-[#F5E8C7] min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 capitalize">{genre}</h1>
+    <main className="p-8 min-h-screen"> 
+      
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+       
+        <h1 className="text-3xl font-heading font-bold capitalize text-white">
+          {formatGenreName(genre)}
+        </h1>
+
+       
+        <div className="w-full md:w-64">
+           <GenresDropdown />
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 justify-center">
         {games.map((game) => (
           <Card key={game.id} game={game} />

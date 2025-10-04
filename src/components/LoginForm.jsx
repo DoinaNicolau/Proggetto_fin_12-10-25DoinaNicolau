@@ -4,6 +4,7 @@ import { supabase } from "../supabase/supabase-client";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [formState, setFormState] = useState({ email: "", password: "" });
   const [formErrors, setFormErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
@@ -15,81 +16,87 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setFormErrors({});
+    setSuccessMessage("");
 
     if (!formState.email || !formState.password) {
-      setFormErrors({ general: "Email and password are required" });
+      setFormErrors({ general: "Email e password sono obbligatori." });
+      setLoading(false);
       return;
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: formState.email,
       password: formState.password,
     });
 
     if (error) {
-      setFormErrors({ general: error.message });
-      setSuccessMessage("");
+      setFormErrors({ general: "Credenziali non valide. Riprova." }); 
     } else {
-      setSuccessMessage("Login effettuato con successo! ✅");
-      setFormErrors({});
-
+      setSuccessMessage("Login effettuato! Verrai reindirizzato...");
       setTimeout(() => {
         navigate("/");
+        window.location.reload(); 
       }, 1500);
     }
+    setLoading(false);
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-5 p-6 rounded-xl shadow-lg bg-white/60 backdrop-blur-sm max-w-md mx-auto"
-    >
-      {/* Messaggi */}
-      {formErrors.general && (
-        <p className="text-red-600 text-center font-semibold">{formErrors.general}</p>
-      )}
-      {successMessage && (
-        <p className="text-green-600 text-center font-semibold">{successMessage}</p>
-      )}
+    // Contenitore principale del form
+    <div className="w-full max-w-md mx-auto bg-card-bg rounded-lg p-8 border border-secondary/20">
+      <h2 className="text-3xl font-heading text-center text-primary mb-6">ACCEDI</h2>
+      
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        {/* Messaggi di errore e successo */}
+        {formErrors.general && (
+          <p className="text-accent text-center font-body bg-accent/10 p-3 rounded-md">{formErrors.general}</p>
+        )}
+        {successMessage && (
+          <p className="text-green-400 text-center font-body bg-green-400/10 p-3 rounded-md">{successMessage}</p>
+        )}
 
-      {/* Email */}
-      <div className="flex flex-col">
-        <label htmlFor="email" className="text-sm font-medium text-gray-700">Email</label>
-        <input
-          id="email"
-          type="email"
-          name="email"
-          value={formState.email}
-          onChange={handleChange}
-          placeholder="Inserisci la tua email"
-          className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          required
-        />
-      </div>
+        {/* Campo Email */}
+        <div className="flex flex-col gap-2">
+          <label htmlFor="email" className="font-heading text-secondary text-sm">EMAIL</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            value={formState.email}
+            onChange={handleChange}
+            placeholder="iltuonome@esempio.com"
+            className="px-4 py-3 rounded-md bg-dark-bg border border-secondary/30 text-primary placeholder-secondary/60 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all"
+            required
+          />
+        </div>
 
-      {/* Password */}
-      <div className="flex flex-col">
-        <label htmlFor="password" className="text-sm font-medium text-gray-700">Password</label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          value={formState.password}
-          onChange={handleChange}
-          placeholder="Inserisci la tua password"
-          className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          required
-        />
-      </div>
+        {/* Campo Password */}
+        <div className="flex flex-col gap-2">
+          <label htmlFor="password" className="font-heading text-secondary text-sm">PASSWORD</label>
+          <input
+            id="password"
+            type="password"
+            name="password"
+            value={formState.password}
+            onChange={handleChange}
+            placeholder="••••••••"
+            className="px-4 py-3 rounded-md bg-dark-bg border border-secondary/30 text-primary placeholder-secondary/60 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all"
+            required
+          />
+        </div>
 
-      {/* Submit */}
-      <button
-        type="submit"
-        className="mt-4 py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-yellow-400 to-[#F5E8C7] hover:from-yellow-500 hover:to-[#F5E8C7]/90 transition"
-      >
-        Login
-      </button>
-    </form>
+        {/* Pulsante Submit */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="mt-4 py-3 rounded-md font-heading text-lg text-primary bg-accent hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-wait"
+        >
+          {loading ? "CARICAMENTO..." : "ENTRA"}
+        </button>
+      </form>
+    </div>
   );
 };
 

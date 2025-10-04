@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { supabase } from "../supabase/supabase-client";
-import { FormSchema, getErrors } from "../lib/validationForm";
+import { FormSchema, getErrors } from "../lib/validationForm"; // Assumo che usi Zod qui
 import { useNavigate } from "react-router-dom";
 
-  const RegisterForm = () => {
-    
+const RegisterForm = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [formState, setFormState] = useState({
     email: "",
     firstName: "",
@@ -14,8 +14,7 @@ import { useNavigate } from "react-router-dom";
     password: "",
   });
   const [formErrors, setFormErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState(""); 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,10 +23,14 @@ import { useNavigate } from "react-router-dom";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setFormErrors({});
+    setSuccessMessage("");
 
     const validation = FormSchema.safeParse(formState);
     if (!validation.success) {
       setFormErrors(getErrors(validation.error));
+      setLoading(false);
       return;
     }
 
@@ -44,113 +47,82 @@ import { useNavigate } from "react-router-dom";
     });
 
     if (error) {
-      setErrorMessage(error.message); // messaggio inline
-      setSuccessMessage("");
+  
+      if (error.message.includes("User already registered")) {
+        setFormErrors({ email: "Questa email è già stata utilizzata." });
+      } else {
+        setFormErrors({ general: "Si è verificato un errore. Riprova." });
+      }
     } else {
-      setSuccessMessage("Registrazione completata! ✅"); // messaggio inline
-      setErrorMessage("");
-
-      // Reindirizza dopo 1.5 secondi per dare tempo di leggere il messaggio
-      setTimeout(() => {
-        navigate("/");
-      }, 1500);
+      setSuccessMessage("Registrazione completata! Controlla la tua email per confermare l'account.");
+  
     }
+    setLoading(false);
   };
 
+  // Stili riutilizzabili per gli input
+  const inputStyles = "px-4 py-3 rounded-md bg-dark-bg border border-secondary/30 text-primary placeholder-secondary/60 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all";
+  const labelStyles = "font-heading text-secondary text-sm";
+  const errorStyles = "text-accent text-xs mt-1";
 
   return (
-        <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-5 p-6 rounded-xl shadow-lg bg-white/60 backdrop-blur-sm"
-    >
-      {/* Email */}
-      <div className="flex flex-col">
-        <label htmlFor="email" className="text-sm font-medium text-gray-700">Email</label>
-        <input
-          id="email"
-          type="email"
-          name="email"
-          value={formState.email}
-          onChange={handleChange}
-          placeholder="Inserisci la tua email"
-          className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          required
-        />
-        {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
-      </div>
+    <div className="w-full max-w-md mx-auto bg-card-bg rounded-lg p-8 border border-secondary/20">
+      <h2 className="text-3xl font-heading text-center text-primary mb-6">CREA UN ACCOUNT</h2>
 
-      {/* First Name */}
-      <div className="flex flex-col">
-        <label htmlFor="firstName" className="text-sm font-medium text-gray-700">First Name</label>
-        <input
-          id="firstName"
-          type="text"
-          name="firstName"
-          value={formState.firstName}
-          onChange={handleChange}
-          placeholder="Inserisci il tuo nome"
-          className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          required
-        />
-        {formErrors.firstName && <p className="text-red-500 text-xs mt-1">{formErrors.firstName}</p>}
-      </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        {/* Messaggi di successo/errore generale */}
+        {successMessage && (
+          <p className="text-green-400 text-center font-body bg-green-400/10 p-3 rounded-md mb-2">{successMessage}</p>
+        )}
+        {formErrors.general && (
+          <p className="text-accent text-center font-body bg-accent/10 p-3 rounded-md mb-2">{formErrors.general}</p>
+        )}
+        
+        {/* Griglia per Nome e Cognome */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="firstName" className={labelStyles}>NOME</label>
+            <input id="firstName" type="text" name="firstName" value={formState.firstName} onChange={handleChange} className={inputStyles} />
+            {formErrors.firstName && <p className={errorStyles}>{formErrors.firstName}</p>}
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="lastName" className={labelStyles}>COGNOME</label>
+            <input id="lastName" type="text" name="lastName" value={formState.lastName} onChange={handleChange} className={inputStyles} />
+            {formErrors.lastName && <p className={errorStyles}>{formErrors.lastName}</p>}
+          </div>
+        </div>
+        
+        {/* Email */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="email" className={labelStyles}>EMAIL</label>
+          <input id="email" type="email" name="email" value={formState.email} onChange={handleChange} className={inputStyles} />
+          {formErrors.email && <p className={errorStyles}>{formErrors.email}</p>}
+        </div>
+        
+        {/* Username */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="username" className={labelStyles}>USERNAME</label>
+          <input id="username" type="text" name="username" value={formState.username} onChange={handleChange} className={inputStyles} />
+          {formErrors.username && <p className={errorStyles}>{formErrors.username}</p>}
+        </div>
 
-      {/* Last Name */}
-      <div className="flex flex-col">
-        <label htmlFor="lastName" className="text-sm font-medium text-gray-700">Last Name</label>
-        <input
-          id="lastName"
-          type="text"
-          name="lastName"
-          value={formState.lastName}
-          onChange={handleChange}
-          placeholder="Inserisci il tuo cognome"
-          className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          required
-        />
-        {formErrors.lastName && <p className="text-red-500 text-xs mt-1">{formErrors.lastName}</p>}
-      </div>
-
-      {/* Username */}
-      <div className="flex flex-col">
-        <label htmlFor="username" className="text-sm font-medium text-gray-700">Username</label>
-        <input
-          id="username"
-          type="text"
-          name="username"
-          value={formState.username}
-          onChange={handleChange}
-          placeholder="Scegli un username"
-          className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          required
-        />
-        {formErrors.username && <p className="text-red-500 text-xs mt-1">{formErrors.username}</p>}
-      </div>
-
-      {/* Password */}
-      <div className="flex flex-col">
-        <label htmlFor="password" className="text-sm font-medium text-gray-700">Password</label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          value={formState.password}
-          onChange={handleChange}
-          placeholder="Inserisci una password sicura"
-          className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          required
-        />
-        {formErrors.password && <p className="text-red-500 text-xs mt-1">{formErrors.password}</p>}
-      </div>
-
-      {/* Submit */}
-      <button
-        type="submit"
-        className="mt-4 py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-yellow-400 to-[#F5E8C7] hover:from-yellow-500 hover:to-[#F5E8C7]/90 transition"
-      >
-        Register
-      </button>
-    </form>
+        {/* Password */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="password" className={labelStyles}>PASSWORD</label>
+          <input id="password" type="password" name="password" value={formState.password} onChange={handleChange} className={inputStyles} />
+          {formErrors.password && <p className={errorStyles}>{formErrors.password}</p>}
+        </div>
+        
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="mt-4 py-3 rounded-md font-heading text-lg text-primary bg-accent hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-wait"
+        >
+          {loading ? "REGISTRAZIONE..." : "REGISTRATI"}
+        </button>
+      </form>
+    </div>
   );
 };
 

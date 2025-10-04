@@ -1,34 +1,29 @@
-import { useState } from "react";
+// src/layout/Layout.jsx
+
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { Outlet } from "react-router-dom";
-import Searchbar from "../components/Searchbar";
+import Header from "../components/Header";
 
 export default function Layout() {
-  const [selectedGenre, setSelectedGenre] = useState("");
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   return (
-    <div className="flex min-h-screen w-full">
-      {/* Sidebar */}
-      <Sidebar onGenreSelect={setSelectedGenre} />
+    
+      <div className="min-h-screen flex flex-col  bg-dark-bg text-white">
+      
+      <Sidebar />
 
-      {/* Contenuto principale */}
-      <div className="flex-1 flex flex-col w-full">
-        <Header />
-
-        {/* Searchbar  */}
-        <div className="p-2">
-          <Searchbar />
+      <main className="flex-grow">
+        {isHomePage && <Header />}
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8">
+          <Outlet />
         </div>
+      </main>
 
-        {/* Outlet */}
-        <div className="flex-1 w-full">
-          <Outlet context={{ selectedGenre, setSelectedGenre }} />
-        </div>
-
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 }

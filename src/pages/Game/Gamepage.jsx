@@ -2,90 +2,121 @@ import { useParams, useNavigate } from "react-router-dom";
 import useFetchSolution from "../../hooks/useFetchSolution";
 import ToggleFavorite from "../../components/ToggleFavorite";
 import Chatbox from "../../components/Chatbox";
+import Card from "../../components/Card"; 
+
+// Componente per lo stato di caricamento (Skeleton Loader)
+const GamePageSkeleton = () => (
+  <div className="animate-pulse">
+    {/* Banner placeholder */}
+    <div className="h-[50vh] bg-gray-800"></div> 
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <aside className="lg:col-span-1">
+          <div className="bg-gray-800/50 rounded-lg h-64"></div> 
+          <div className="bg-gray-800/50 rounded-lg h-12 mt-4"></div>
+        </aside>
+        <div className="lg:col-span-2">
+          <div className="bg-gray-800/50 rounded-lg h-48"></div>
+          <div className="bg-gray-800/50 rounded-lg h-32 mt-8"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 export default function GamePage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const apiKey = import.meta.env.VITE_API_KEY;
-  const initialUrl = `https://api.rawg.io/api/games/${id}?key=${apiKey}`;
 
-  const { data: game, loading, error } = useFetchSolution(initialUrl);
+  // Fetch per i dettagli del gioco principale
+  const gameDetailUrl = `https://api.rawg.io/api/games/${id}?key=${apiKey}`;
+  const { data: game, loading, error } = useFetchSolution(gameDetailUrl);
 
-  if (loading)
-    return (
-      <main className="p-4 sm:p-6 min-h-screen bg-[#F5E8C7] flex justify-center items-center">
-        <p className="text-lg font-semibold text-gray-700">Caricamento...</p>
-      </main>
-    );
+ 
+  const suggestedGamesUrl = `https://api.rawg.io/api/games/${id}/game-series?key=${apiKey}&page_size=4`;
+  const { data: suggestedGames } = useFetchSolution(suggestedGamesUrl);
 
-  if (error)
-    return (
-      <main className="p-4 sm:p-6 min-h-screen bg-[#F5E8C7] flex justify-center items-center">
-        <p className="text-red-600 text-lg font-semibold">{`Errore: ${error}`}</p>
-      </main>
-    );
-
+  if (loading) return <GamePageSkeleton />;
+  // Assumiamo che 'text-accent' sia red-600 o simile per il tema scuro
+  if (error) return <main className="text-center py-20 text-red-600">Errore: {error}</main>;
   if (!game) return null;
 
+  const minimalCardClass = "p-4 rounded-lg border border-gray-700/50"; 
+
   return (
-    <main className="p-4 sm:p-6 min-h-screen bg-[#F5E8C7] flex justify-center">
-      <article className="w-full max-w-4xl bg-white/70 backdrop-blur-md rounded-xl shadow-lg p-6 sm:p-8 flex flex-col gap-6 mx-auto">
-        {/* Header con titolo e bottone indietro */}
-        <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-[#F5E8C7] text-black font-semibold rounded-lg hover:from-yellow-500 hover:to-[#F5E8C7]/90 transition self-start"
-          >
-            ← Torna indietro
-          </button>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-800 drop-shadow-md text-center sm:text-left">
-            {game.name}
-          </h1>
-        </header>
+    <main>
+      {/* --- Banner Image --- */}
+      <header className="relative h-[50vh] w-full">
+        <img
+          src={game.background_image}
+          alt={`Banner di ${game.name}`}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent" />
+      </header>
 
-        {/* Immagine principale */}
-        {game.background_image && (
-          <section>
-            <img
-              src={game.background_image}
-              alt={game.name}
-              className="rounded-xl shadow-xl w-full h-auto max-h-[500px] object-cover"
-            />
-          </section>
-        )}
+      {/* --- Contenuto Principale (Layout a 2 colonne) --- */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 relative z-10">
+        <div className="lg:grid lg:grid-cols-3 lg:gap-8">
+          
+          {/* --- Colonna Sinistra (Info Principali - Sticky) --- */}
+          <aside className="lg:col-span-1 lg:sticky lg:top-24 self-start">
+            <h1 className="text-5xl font-heading text-white mb-4">{game.name}</h1>
+            
+            <section className={minimalCardClass.replace('p-4', 'p-6')}> 
+              <h2 className="sr-only">Dettagli del gioco</h2> 
+              <ul className="space-y-3 font-body text-sm">
+                <li className="flex justify-between">
+                  <span className="text-gray-400">Rilascio:</span>
+                  <span className="text-white">{game.released || "N/A"}</span>
+                </li>
+                <li className="flex justify-between">
+                  <span className="text-gray-400">Metascore:</span>
+                  <span className="font-bold text-red-600">{game.metacritic || "N/A"}</span>
+                </li>
+                <li className="flex justify-between">
+                  <span className="text-gray-400">Generi:</span>
+                  <span className="text-white text-right">{game.genres.map(g => g.name).join(", ")}</span>
+                </li>
+                 <li className="flex justify-between">
+                  <span className="text-gray-400">Sviluppatore:</span>
+                  <span className="text-white text-right">{game.developers[0]?.name || "N/A"}</span>
+                </li>
+              </ul>
+              <div className="mt-6 flex justify-center">
+                <ToggleFavorite game={game} />
+              </div>
+            </section>
+          </aside>
 
-        {/* Toggle Favorite */}
-        <section className="mt-4 self-center sm:self-start">
-          <ToggleFavorite game={game} />
+          {/* --- Colonna Destra (Descrizione e Chat) --- */}
+          <div className="lg:col-span-2 mt-8 lg:mt-0">
+            
+            <article className={minimalCardClass}> 
+              <h2 className="text-3xl font-heading text-red-600 mb-4">DESCRIZIONE</h2>
+              <p className="font-body text-gray-400 leading-relaxed whitespace-pre-line">
+                {game.description_raw}
+              </p>
+            </article>
+            <Chatbox game={game} />
+          </div>
+
+        </div>
+      </section>
+
+      {/* --- Sezione Giochi Simili ---*/}
+
+      {suggestedGames?.results?.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+          <h2 className="text-4xl font-heading text-red-600 mb-8">POTREBBE INTERESSARTI ANCHE</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {suggestedGames.results.map(suggestedGame => (
+              <Card key={suggestedGame.id} game={suggestedGame} />
+            ))}
+          </div>
         </section>
-
-        {/* Info principali */}
-        <section className="flex flex-wrap gap-6 text-gray-800 font-medium justify-center sm:justify-start">
-          <p>
-            <strong>Rilasciato:</strong> {game.released || "N/A"}
-          </p>
-          <p>
-            <strong>Rating:</strong> {game.rating || "N/A"}
-          </p>
-          {game.genres && (
-            <p>
-              <strong>Generi:</strong> {game.genres.map((g) => g.name).join(", ")}
-            </p>
-          )}
-        </section>
-
-        {/* Descrizione */}
-        <section>
-          <p className="text-gray-700 leading-relaxed text-center sm:text-left">
-            {game.description_raw}
-          </p>
-        </section>
-
-        {/* Chatbox */}
-        <section className="mt-8 w-full">
-          <Chatbox game={game} />
-        </section>
-      </article>
+      )}
     </main>
   );
 }

@@ -1,62 +1,91 @@
-import { useState } from "react";
+import { useState, useContext } from "react"; 
 import { supabase } from "../supabase/supabase-client";
-import { useSession } from "../context/useSession";
+import SessionContext from "../context/SessionContext"; 
 import RealtimeChat from "./RealtimeChat";
 
 export default function Chatbox({ game }) {
-  const { user } = useSession();
+  
+  // Per il debug della chiave RAWG (anche se non usata qui)
+  const rawgApiKey = import.meta.env.VITE_API_KEY; 
+
+
+  const { user } = useContext(SessionContext); 
+  
   const [message, setMessage] = useState("");
 
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
+    
+    // 1. Controlli di validità
     if (!user) {
       alert("Devi effettuare il login per inviare messaggi");
       return;
     }
     if (message.trim().length === 0) return;
 
+    const senderUsername = user.user_metadata?.username || user.email;
+
+    // 3. Inserimento del messaggio
     const { error } = await supabase.from("messages").insert([
       {
         content: message,
         profile_id: user.id,
-        profile_username: user.email,
+        profile_username: senderUsername,
         game_id: game.id,
       },
     ]);
 
-    if (error) console.error("Errore inserimento messaggio:", error);
-    else setMessage("");
+    if (error) {
+      console.error("Errore inserimento messaggio:", error);
+    } else {
+      setMessage("");
+    }
   };
 
   return (
-    <section className="mt-6 w-full max-w-4xl mx-auto" aria-label="Chat dei giocatori">
-      <header className="px-4 pt-4 mb-2">
-        <h2 className="text-xl font-bold text-gray-800">
-          💬 Gamers chat
+    // Sezione Chatbox: Sfondo scuro e bordo sottile
+    <section 
+      className="mt-12 w-full max-w-4xl mx-auto bg-gray-900 rounded-lg border border-gray-700 shadow-xl" 
+      aria-label="Chat dei giocatori"
+    >
+      {/* Header della Chatbox */}
+      <header className="p-4 border-b border-gray-700">
+        <h2 className="text-2xl font-heading text-white">
+          CHAT DELLA COMMUNITY
         </h2>
       </header>
 
-      <div className="max-h-80 sm:max-h-96 overflow-y-auto mb-4 p-2 bg-white/30 rounded-lg">
+      {/* Area Messaggi (scrollable) */}
+      <div className="h-96 overflow-y-auto p-4 hide-scrollbar"> 
+     
         <ul>
+        
           <RealtimeChat game={game} />
         </ul>
       </div>
 
-      <form onSubmit={handleMessageSubmit} className="flex gap-2 px-4 pb-4">
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Scrivi un messaggio..."
-          className="flex-1 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white/70"
-        />
-        <button
-          type="submit"
-          className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 rounded-lg font-semibold flex-shrink-0"
-        >
-          Invia
-        </button>
-      </form>
+      {/* Form di invio */}
+      <footer className="p-4 border-t border-gray-700">
+        <form onSubmit={handleMessageSubmit} className="flex gap-3">
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder={user ? "Scrivi il tuo messaggio..." : "Effettua il login per chattare"}
+            disabled={!user}
+            // Stili per l'input in tema scuro
+            className="flex-1 px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
+          />
+          <button
+            type="submit"
+            disabled={!user || message.trim().length === 0}
+            // Stili per il pulsante
+            className="px-6 py-2 bg-red-600 text-white font-heading rounded-md hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+          >
+            INVIA
+          </button>
+        </form>
+      </footer>
     </section>
   );
 }
