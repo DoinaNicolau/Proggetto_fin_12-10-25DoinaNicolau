@@ -158,4 +158,40 @@ VITE_SUPABASE_ANON_KEY=la_tua_chiave_anon_supabase
 
 Avvia il progetto in locale:
 
-npm run dev
+npm run dev  
+🚀 Prossime Implementazioni e Miglioramenti Futuri
+Il progetto è pensato per essere un punto di partenza robusto per un portale di videogiochi completo. Di seguito sono elencate le aree chiave per l'evoluzione e il miglioramento futuro della piattaforma:
+1. Funzionalità di Community e Interazione
+Sistema di Recensioni Complete:
+Implementazione di un campo di testo per recensioni più lunghe e dettagliate (non solo un voto 1-5).
+Pagine dedicate per la visualizzazione e l'ordinamento delle recensioni (più recenti, più utili).
+Funzionalità Sociale Avanzata:
+Aggiungere la possibilità di seguire altri utenti.
+Sezione "Attività Recenti" sul profilo utente che mostra i giochi votati o aggiunti ai preferiti.
+Miglioramenti alla Chat:
+Supporto per la formattazione del testo (es. Markdown).
+Visualizzazione degli avatar degli utenti nella chat.
+2. Miglioramenti all'Esperienza Utente (UX/UI)
+Filtri e Ordinamento Avanzati:
+Introduzione di filtri complessi nella pagina di ricerca/genere (es. filtra per Metascore, data di rilascio, piattaforma).
+Opzioni di ordinamento dinamico (Ascendente/Discendente per popolarità, data, nome).
+Modalità Light Theme (Opzionale):
+Nonostante il focus sul Dark Theme, implementare un toggle per passare a una modalità chiara per maggiore accessibilità e preferenza utente.
+Personalizzazione del Profilo Utente:
+Permettere agli utenti di cambiare l'immagine del profilo (avatar) tramite Supabase Storage.
+Campi aggiuntivi nel profilo (es. descrizione, piattaforma preferita).
+3. Ottimizzazione delle Performance
+Caching delle API:
+Implementare un layer di caching (es. utilizzando localStorage o Supabase) per le richieste RAWG API più frequenti, riducendo i tempi di caricamento e l'utilizzo delle chiamate API.
+Code Splitting Avanzato:
+Ottimizzare il caricamento suddividendo il codice in blocchi più piccoli e caricando i componenti pesanti solo quando necessario (es. la componente della chat o le librerie di Framer Motion) tramite React.lazy e Suspense.
+4. Gestione Dati e Backend (Supabase)
+Notifiche Real-Time:
+Utilizzare le funzionalità Realtime di Supabase per inviare notifiche agli utenti (es. quando qualcuno risponde a un commento o li segue).
+Moderazione della Chat:
+Strumenti base di moderazione per rimuovere messaggi inappropriati.
+5. Estensione dei Contenuti
+Sezione News/Articoli:
+Integrazione di un'API esterna o un CMS leggero per la pubblicazione di notizie relative ai videogiochi.
+Pagine Piattaforme:
+Creazione di pagine dedicate per filtrare e visualizzare i giochi in base alla piattaforma (PC, PlayStation, Xbox, ecc.).
